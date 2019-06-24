@@ -5,9 +5,9 @@
 # Imports
 import json
 from random import randint
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, session
 from forms import SimulationForm
-from models import RandomSimulation
+from models import RandomSimulation, NewRandomSimulation
 
 # Global Variables
 
@@ -15,13 +15,6 @@ APP = Flask(__name__)
 APP.secret_key = "socrates-plato-aristotle-zeno"
 
 RND_SIM = None
-
-# Functions
-# @APP.route("/dt_sim")
-# def deterministic_simulation():
-#     """
-#         Parametriza a simulação e retorna a página e valores
-#     """
 
 
 @APP.route("/rnd_sim")
@@ -37,6 +30,21 @@ def random_simulation():
                           "atd": randint(RND_SIM.atd_min, RND_SIM.atd_max)})
 
     return Response(generate(), mimetype="json")
+
+
+def simulate_random():
+    """
+        Retorna uma funcao que gera tuplas de chegada e atendimento
+    """
+    def generate_json():
+        """
+            Converte tuplas para json
+        """
+        # session["simulation"].get_row()
+        yield json.dumps({"arv": randint(RND_SIM.arv_min, RND_SIM.arv_max),
+                          "atd": randint(RND_SIM.atd_min, RND_SIM.atd_max)})
+
+    return Response(generate_json(), mimetype="json")
 
 # Routes
 
@@ -64,6 +72,11 @@ def home():
             RND_SIM = RandomSimulation(sim_form.clients.data, sim_form.arv_min.data,
                                        sim_form.arv_max.data, sim_form.atd_min.data,
                                        sim_form.atd_max.data)
+
+            session["simulation"] = NewRandomSimulation(sim_form.clients.data, (
+                sim_form.arv_min.data, sim_form.arv_max.data), (
+                    sim_form.atd_min.data, sim_form.atd_max.data), "uniform").__dict__
+
             return render_template("random.html.j2", clients=sim_form.clients.data)
 
         return render_template("home.html.j2", form=sim_form, failure=True)

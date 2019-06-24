@@ -115,6 +115,12 @@
 
 <script type="text/javascript">
 
+    var clientCounter = 0;
+    var clients = {{clients}};
+
+    
+
+
     function getData(){
         return Math.random();
     }
@@ -129,9 +135,6 @@
     }, 2000);
 
     // Simulation code
-
-    var clientCounter = 0;
-    var clients = {{clients}};
 
     var totalServico = 0;
     var totalFila = 0;
@@ -242,4 +245,7 @@
     }, 1000);
 
 </script>
+
+<script src="{{ url_for('static', filename='js/simulation.js') }}"></script>
+
 {% endblock %}
