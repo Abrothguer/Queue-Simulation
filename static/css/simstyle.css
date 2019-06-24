@@ -12,6 +12,39 @@ body {
     background-color: white;
 }
 
+.container-simu {
+    border-radius: 5px;
+    padding: 2rem 1rem;
+    background-color: white;
+    margin: 4rem 5rem;
+}
+
 #stats-table {
     width: 50%;
+}
+
+.simular {
+    color: white;
+    font-size: 20px;
+    border-radius: 4px;
+    padding: 10px 15px;
+    border: 1px solid black;
+}
+
+.main-svg{
+    width: 100%;
+}
+
+.svg-container{
+    width: 100% !important;
+}
+
+#div-buttons {
+    position: fixed;
+    bottom: -4px;
+    right: 10px;
+}
+
+.w-100-px {
+    width: 100px;
 }

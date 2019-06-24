@@ -9,6 +9,7 @@
 
 # Imports
 from random import random, randint
+# from flask_restless import DefaultSerializer
 
 # Classes
 
@@ -34,16 +35,37 @@ class NewRandomSimulation():
         self.clients = clients
         if distr not in DISTRS.keys():
             raise ValueError(f"Distribuição {distr} não suportada")
+        self.distr = distr
 
         self.arrival_distr = DISTRS[distr](*arrival).__dict__
         self.attendance_distr = DISTRS[distr](*attendance).__dict__
 
-    def get_row(self):
+    def generate_objects(self):
+
+        self.arrival_distr_obj = DISTRS[self.distr](self.arrival_distr["minimum"], self.arrival_distr["maximum"])
+        self.attendance_distr_obj = DISTRS[self.distr](self.attendance_distr["minimum"], self.attendance_distr["maximum"])
+
+    def get_next(self):
         """
-            Gera números aleatórios para chegadas e atendimentos
+            Gera a próxima iteração da simulação
         """
-        return {"arrival": self.arrival_distr.get_value(),
-                "attendance": self.attendance_distr.get_value()}
+
+        return{"client-number": 0,
+               "arrival-last": self.arrival_distr_obj.get_value(),
+               "arrival-total": 1,
+               "attendance": self.attendance_distr_obj.get_value(),
+               "attendance-begin": 1,
+               "queue": 1,
+               "attendance-end": 1,
+               "system-total": 1,
+               "server-free": 1
+              }
+
+    def get_summary(self):
+        """
+            Retorna o sumário da simulação
+        """
+        return {}
 
 
 class UniformDistribution():

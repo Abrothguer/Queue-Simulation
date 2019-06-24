@@ -31,20 +31,28 @@ def random_simulation():
 
     return Response(generate(), mimetype="json")
 
-
+@APP.route("/get_random")
 def simulate_random():
     """
         Retorna uma funcao que gera tuplas de chegada e atendimento
     """
-    def generate_json():
+    def generate_json(simulation):
         """
             Converte tuplas para json
         """
-        # session["simulation"].get_row()
-        yield json.dumps({"arv": randint(RND_SIM.arv_min, RND_SIM.arv_max),
-                          "atd": randint(RND_SIM.atd_min, RND_SIM.atd_max)})
 
-    return Response(generate_json(), mimetype="json")
+        yield json.dumps(simulation.get_next())
+
+    simu_dict = session["simulation"]
+    print(simu_dict)
+    simu_obj = NewRandomSimulation(*[
+        simu_dict["clients"],
+        (simu_dict["arrival_distr"]["minimum"], simu_dict["arrival_distr"]["maximum"]),
+        (simu_dict["attendance_distr"]["minimum"], simu_dict["attendance_distr"]["maximum"]),
+        simu_dict["distr"]])
+    simu_obj.generate_objects()
+
+    return Response(generate_json(simu_obj), mimetype="json")
 
 # Routes
 
@@ -77,7 +85,7 @@ def home():
                 sim_form.arv_min.data, sim_form.arv_max.data), (
                     sim_form.atd_min.data, sim_form.atd_max.data), "uniform").__dict__
 
-            return render_template("random.html.j2", clients=sim_form.clients.data)
+            return render_template("random2.html.j2", simulation=session["simulation"])
 
         return render_template("home.html.j2", form=sim_form, failure=True)
 
