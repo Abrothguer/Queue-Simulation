@@ -1,0 +1,245 @@
+{% extends 'layout.html.j2' %}
+
+{% block title %}
+
+<title>Sistema de Filas - Aleatório</title>
+
+{% endblock %}
+
+{% block head %}
+
+<link rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/simstyle.css')}}">
+
+{% endblock %}
+
+{% block body %}
+
+<header id="div-header">
+    <h1 id="main-header">Modelagem e Simulação</h1>
+    <h2>Sistema de Filas - Aleatório</h2>
+</header>
+
+<div class="container">
+
+    <h2> Tabela de Simulação </h2>
+    <br>
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col" width="8%">Cliente</th>
+                <th scope="col" width="13%">Tempo desde a última chegada</th>
+                <th scope="col" width="12%">Tempo de chegada</th>
+                <th scope="col" width="10%">Tempo de serviço</th>
+                <th scope="col" width="15%">Tempo de início do serviço</th>
+                <th scope="col" width="6%">Tempo de fila</th>
+                <th scope="col" width="12%">Tempo final do serviço</th>
+                <th scope="col" width="12%">Tempo gasto no sistema</th>
+                <th scope="col" width="12%">Tempo livre do operador</th>
+            </tr>
+        </thead>
+        <tbody id="sim-body">
+
+        </tbody>
+    </table>
+
+    <hr>
+
+    <div id="result">
+        <h2> Resultados da Simulação </h2>
+        <p> Ao final da simulação os resultados irão aparecer abaixo </p>
+
+        <table class="table table-bordered"
+               id="stats-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" width="30%">Estatísticas</th>
+                    <th scope="col" width="10%">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Tempo total de serviço</th>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Tempo total na fila</th>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Tempo total gasto no sistema</th>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Tempo livre do operador</th>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Tempo médio de espera na fila</th>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Probabilidade de espera na fila</th>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Probabilidade do servidor livre</th>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Tempo médio de serviço</th>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <th scope="row">Tempo médio gasto no sistema</th>
+                    <td>-</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div id="chart-test">
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script src="{{ url_for('static', filename='js/plotly/plotly-latest.min.js') }}"></script>
+
+<script type="text/javascript">
+
+    function getData(){
+        return Math.random();
+    }
+
+    Plotly.plot('chart-test', [{
+        y:[getData()],
+        type:'line'
+    }]);
+
+    setInterval(function(){
+        Plotly.extendTraces('chart-test', {y:[[getData()]]}, [0]);
+    }, 2000);
+
+    // Simulation code
+
+    var clientCounter = 0;
+    var clients = {{clients}};
+
+    var totalServico = 0;
+    var totalFila = 0;
+    var totalSistema = 0;
+    var totalOperador = 0;
+
+    var clientesFila = 0;
+    var totalSimulacao = 0;
+
+    var simInterval = setInterval(() => {
+        if(clientCounter == clients){
+            clearInterval(simInterval);
+            var statsTable = document.getElementById("stats-table").children[1].children;
+
+            totalSimulacao = parseFloat(document.getElementById("client-" + clients).children[6].textContent);
+
+            statsTable[0].children[1].textContent = totalServico;
+            statsTable[1].children[1].textContent = totalFila;
+            statsTable[2].children[1].textContent = totalSistema;
+            statsTable[3].children[1].textContent = totalOperador;
+
+            statsTable[4].children[1].textContent = ((totalFila * 1.0) / clients).toFixed(3);
+            statsTable[5].children[1].textContent = ((clientesFila * 1.0) / clients).toFixed(3);
+            statsTable[6].children[1].textContent = ((totalOperador) / totalSimulacao).toFixed(3);
+            statsTable[7].children[1].textContent = ((totalServico * 1.0) / clients).toFixed(3);
+            statsTable[8].children[1].textContent = ((totalSistema * 1.0) / clients).toFixed(3);
+
+
+            return;
+        }
+
+        fetch("{{ url_for('random_simulation') }}")
+        .then(response => {
+            response.text().then(t => {
+
+                console.log(typeof t);
+                console.log(t);
+
+                json_data = JSON.parse(t);
+                if (json_data == {}) {
+                    return;
+                }
+
+                console.log(json_data);
+                //json_data = JSON.parse(json_data);
+
+                var row = document.createElement("TR");
+                row.setAttribute("id", "client-" + (++clientCounter));
+
+                var tds = []
+                for(var i = 0; i < 9; ++i){
+                    tds.push(document.createElement("TD"));
+                    row.appendChild(tds[i]);
+                }
+
+                tds[0].setAttribute("scope", "row");
+                tds[0].textContent = clientCounter;
+                tds[1].textContent = json_data["arv"];
+                tds[3].textContent = json_data["atd"];
+                totalServico += json_data["atd"];
+
+                if(clientCounter == 1){
+                    tds[2].textContent = json_data["arv"];
+                    tds[4].textContent = json_data["arv"];
+                    tds[5].textContent = 0;
+                    tds[6].textContent = json_data["arv"] + json_data["atd"];
+                    tds[7].textContent = json_data["atd"];
+                    totalSistema += json_data["atd"];
+                    tds[8].textContent = json_data["arv"];
+                    totalOperador += json_data["arv"];
+                } else {
+
+                    var prevs = document.getElementById("client-" + (clientCounter - 1)).children;
+                    // Tempo de chegada
+                    tds[2].textContent = json_data["arv"] + parseFloat(prevs[2].textContent);
+
+                    var fila = parseFloat(prevs[6].textContent) - parseFloat(tds[2].textContent);
+                    if(fila <= 0){
+                        // Tempo de fila
+                        tds[5].textContent = 0;
+                        // Início do serviço
+                        tds[4].textContent = tds[2].textContent;
+                        // Tempo do operador livre
+                        tds[8].textContent = Math.abs(fila);
+                        totalOperador += Math.abs(fila);
+                    } else {
+                        // Tempo de fila
+                        tds[5].textContent = fila;
+                        totalFila += fila;
+                        ++clientesFila;
+                        // Início do serviço
+                        tds[4].textContent = parseFloat(tds[2].textContent) + fila;
+                        // Tempo do operador livre
+                        tds[8].textContent = 0;
+                    }
+
+                    // Fim do serviço
+                    tds[6].textContent = parseFloat(tds[4].textContent) + + json_data["atd"];
+                    // Tempo no sistema
+                    tds[7].textContent = json_data["atd"] + (fila <= 0 ? 0 : fila);
+                    totalSistema += json_data["atd"] + (fila <= 0 ? 0 : fila);
+                }
+
+                document.getElementById("sim-body").appendChild(row);
+
+            })
+        });
+    }, 1000);
+
+</script>
+{% endblock %}

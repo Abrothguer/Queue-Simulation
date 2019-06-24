@@ -1,0 +1,17 @@
+body {
+    background-image: none;
+}
+
+.table thead th {
+    vertical-align: middle;
+}
+
+.container {
+    border-radius: 5px;
+    padding: 2rem 1rem;
+    background-color: white;
+}
+
+#stats-table {
+    width: 50%;
+}

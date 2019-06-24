@@ -1,0 +1,112 @@
+{% extends 'layout.html.j2' %}
+
+{% block title %}
+
+<title>Sistema de Filas</title>
+
+{% endblock %}
+
+{% block body %}
+
+<header id="div-header">
+    <h1 id="main-header">Modelagem e Simulação</h1>
+    <h2>Sistema de Filas</h2>
+</header>
+
+<div class="container">
+
+    <form action=""
+          method="POST">
+        {{ form.csrf_token }}
+
+        <h2>Parâmetros para Simulação</h2>
+        <hr>
+        <br>
+
+        <div id="arrival-div" class="form-group">
+            {{ form.arrival_type.label }}:
+
+            {% for subfield in form.arrival_type %}
+                <div class="form-group">
+                    {{ subfield }}
+                    {{ subfield.label }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <hr>
+        <br>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.clients.label }}
+                    {{ form.clients(class='form-control', type='number', placeholder="Clientes", id="clients") }}
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <br>
+
+        <div class="row"
+             id="deterministic">
+            <div class="col">
+                <div class="form-group">
+                    {{ form.lambd.label }}
+                    {{ form.lambd(class='form-control', type='number', step="0.01", placeholder="Lambda", id="lambda") }}
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="form-group">
+                    {{ form.mi.label }}
+                    {{ form.mi(class='form-control', type='number', step="0.01", placeholder="Mi", id="mi") }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row"
+             id="random-arrival">
+            <div class="col">
+                <div class="form-group">
+                    {{ form.arv_min.label }}
+                    {{ form.arv_min(class='form-control', type='number', step="0.01", placeholder="Min", id="min") }}
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="form-group">
+                    {{ form.arv_max.label }}
+                    {{ form.arv_max(class='form-control', type='number', step="0.01", placeholder="Max", id="max") }}
+                </div>
+            </div>
+        </div>
+        <div class="row"
+             id="random-attendance">
+            <div class="col">
+                <div class="form-group">
+                    {{ form.atd_min.label }}
+                    {{ form.atd_min(class='form-control', type='number', step="0.01", placeholder="Min", id="min") }}
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="form-group">
+                    {{ form.atd_max.label }}
+                    {{ form.atd_max(class='form-control', type='number', step="0.01", placeholder="Max", id="max") }}
+                </div>
+            </div>
+        </div>
+
+
+        <hr>
+        <br>
+        {{ form.submit(class='btn btn-md btn-success')}}
+
+    </form>
+
+
+</div>
+
+{% endblock %}

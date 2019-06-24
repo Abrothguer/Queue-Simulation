@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"
+      dir="ltr">
+
+<head>
+    <!-- Metas -->
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author"
+          content="Arthur Borges">
+
+    {% block title %}
+    {% endblock %}
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/bootstrap/bootstrap-4.3.1.min.css') }}">
+
+    <!-- Master CSS -->
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', filename='css/master.css')}}">
+
+    <!-- Page icon -->
+    <link rel="shortcut icon"
+        href="{{ url_for('static', filename='icon/logo-icon.png') }}">
+
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body>
+    <main role="main">
+        {% block body %}
+        {% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/jquery/jquery-3.4.1.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper/popper-1.15.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap-4.3.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/master.js')}}"></script>
+
+    {% block script %}
+    {% endblock %}
+</body>

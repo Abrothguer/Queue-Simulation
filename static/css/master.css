@@ -1,0 +1,24 @@
+body {
+    background-color: black;
+    background-image: url("../img/orange.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+#main-header {
+    font-size: 3.5rem;
+    font-weight: bold;
+}
+
+#div-header {
+    padding: 5rem 2rem;
+    color: whitesmoke;
+    text-align: center;
+}
+
+form {
+    padding: 1rem 3rem;
+    border-radius: 5px;
+    background-color: white;
+    margin-bottom: 3rem;
+}
