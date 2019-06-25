@@ -1,10 +1,13 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
     Simulação do sistema de filas
 """
 
 # Imports
 
-from random import randint, random
+import numpy as np
 
 
 def get_simulated_data(simulation):
@@ -54,15 +57,15 @@ def get_value_uniform(distr_info):
         Gera e retorna um valor aleatório da distribuição uniforme
     """
     if distr_info["int_bound"]:
-        return randint(distr_info["minimum"], distr_info["maximum"])
-    return distr_info["minimum"] + (random() * (distr_info["maximum"] - distr_info["minimum"]))
+        return round(np.random.randint(distr_info["minimum"], distr_info["maximum"]))
+    return np.random.uniform(distr_info["minimum"], distr_info["maximum"])
 
 
 def get_value_custom(distr_info):
     """
-        Gera e retorna um valor da distribuição
+        Gera e retorna um valor aleatório da distribuição personalizada
     """
-    generated = random()
+    generated = np.random.random()
 
     for val, limit in distr_info["ranges"]:
         if generated > limit:
@@ -71,6 +74,11 @@ def get_value_custom(distr_info):
             break
     return value
 
+def get_value_exponential(distr_info):
+    """
+        Gera e retorna um valor aleatório da distribuição exponencial
+    """
+    return int(np.random.exponential(distr_info["mean"]) * 100) / 100
 
 DISTRS_GETS = {
     "uniform": get_value_uniform,

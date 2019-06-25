@@ -37,6 +37,10 @@
         <hr>
         <br>
 
+        <div id="distributions">
+
+        </div>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -51,54 +55,69 @@
 
         <div class="row"
              id="deterministic">
-            <div class="col">
-                <div class="form-group">
-                    {{ form.lambd.label }}
-                    {{ form.lambd(class='form-control', type='number', step="0.01", placeholder="Lambda", id="lambda") }}
+
+        </div>
+
+        <div id="uniform">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        {{ form.arv_min.label }}
+                        {{ form.arv_min(class='form-control', type='number', step="0.01", placeholder="Min", id="arv_min") }}
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group">
+                        {{ form.arv_max.label }}
+                        {{ form.arv_max(class='form-control', type='number', step="0.01", placeholder="Max", id="arv_max") }}
+                    </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        {{ form.atd_min.label }}
+                        {{ form.atd_min(class='form-control', type='number', step="0.01", placeholder="Min", id="atd_min") }}
+                    </div>
+                </div>
 
-            <div class="col">
-                <div class="form-group">
-                    {{ form.mi.label }}
-                    {{ form.mi(class='form-control', type='number', step="0.01", placeholder="Mi", id="mi") }}
+                <div class="col">
+                    <div class="form-group">
+                        {{ form.atd_max.label }}
+                        {{ form.atd_max(class='form-control', type='number', step="0.01", placeholder="Max", id="atd_max") }}
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row"
-             id="random-arrival">
-            <div class="col">
-                <div class="form-group">
-                    {{ form.arv_min.label }}
-                    {{ form.arv_min(class='form-control', type='number', step="0.01", placeholder="Min", id="min") }}
+        <div id="exponential">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        {{ form.arv_exp_mean.label }}
+                        {{ form.arv_exp_mean(class='form-control', type="number", step="0.01", placeholder="Média de chegada", id="arv_exp_mean") }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col">
-                <div class="form-group">
-                    {{ form.arv_max.label }}
-                    {{ form.arv_max(class='form-control', type='number', step="0.01", placeholder="Max", id="max") }}
-                </div>
-            </div>
-        </div>
-        <div class="row"
-             id="random-attendance">
-            <div class="col">
-                <div class="form-group">
-                    {{ form.atd_min.label }}
-                    {{ form.atd_min(class='form-control', type='number', step="0.01", placeholder="Min", id="min") }}
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="form-group">
-                    {{ form.atd_max.label }}
-                    {{ form.atd_max(class='form-control', type='number', step="0.01", placeholder="Max", id="max") }}
+                <div class="col">
+                    <div class="form-group">
+                        {{ form.atd_exp_mean.label }}
+                        {{ form.atd_exp_mean(class='form-control', type="number", step="0.01", placeholder="Média de atendimento", id="atd_exp_mean") }}
+                    </div>
                 </div>
             </div>
         </div>
 
+        <div id="normal">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <hr>
         <br>

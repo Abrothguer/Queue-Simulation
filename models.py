@@ -60,7 +60,10 @@ class ExponentialDistribution():
     """
         Classe de distribuição exponencial
     """
-    pass
+
+    def __init__(self, mean):
+
+        self.mean = mean
 
 
 DISTRS = {"uniform": UniformDistribution,

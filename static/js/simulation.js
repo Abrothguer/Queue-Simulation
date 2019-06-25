@@ -7,20 +7,24 @@ var traceArrivals = {
     x: [],
     y: [],
     name: "Tempos de chegada",
-    type: 'scatter'
+    type: 'scatter',
+    mode: 'lines+markers'
 };
 var traceAttendances = {
     x: [],
     y: [],
     name: "Tempos de atendimento",
+    mode: 'lines+markers'
 };
 var traceQueue = {
     x: [],
-    y: []
+    y: [],
+    mode: 'lines+markers'
 };
 var traceSystem = {
     x: [],
-    y: []
+    y: [],
+    mode: 'lines+markers'
 };
 
 // Layout básico para plotar
