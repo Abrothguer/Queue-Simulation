@@ -24,7 +24,9 @@
         <br>
 
         <div id="arrival-div" class="form-group">
-            {{ form.arrival_type.label }}:
+            <b>
+                {{ form.arrival_type.label }}:
+            </b>
 
             {% for subfield in form.arrival_type %}
                 <div class="form-group">
@@ -38,13 +40,26 @@
         <br>
 
         <div id="distributions">
+            <b>
+                {{ form.distributions.label }}
+            </b>
 
+            {% for subfield in form.distributions %}
+                <div class="form-group">
+                    {{ subfield }}
+                    {{ subfield.label }}
+                </div>
+            {% endfor %}
+            <hr>
+            <br>
         </div>
 
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    {{ form.clients.label }}
+                    <b>
+                        {{ form.clients.label }}
+                    </b>
                     {{ form.clients(class='form-control', type='number', placeholder="Clientes", id="clients") }}
                 </div>
             </div>
@@ -55,21 +70,52 @@
 
         <div class="row"
              id="deterministic">
-
+            <div class="d-flex">
+                <h3>Especifique os tempos de chegada e saída</h3>
+                <button type="button"
+                        name="add-input-determ"
+                        onclick="addEntryDeterm()">Adicionar entrada</button>
+                <button type="button"
+                        name="rem-input-determ">Remover entrada</button>
+            </div>
+            <table class="table">
+                <thead>
+                    <th>Chegada</th>
+                    <th>Atendimento</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="number"
+                                   name=""
+                                   value="">
+                        </td>
+                        <td>
+                            <input type="number"
+                                   name=""
+                                   value="">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div id="uniform">
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        {{ form.arv_min.label }}
+                        <b>
+                            {{ form.arv_min.label }}
+                        </b>
                         {{ form.arv_min(class='form-control', type='number', step="0.01", placeholder="Min", id="arv_min") }}
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="form-group">
-                        {{ form.arv_max.label }}
+                        <b>
+                            {{ form.arv_max.label }}
+                        </b>
                         {{ form.arv_max(class='form-control', type='number', step="0.01", placeholder="Max", id="arv_max") }}
                     </div>
                 </div>
@@ -77,14 +123,18 @@
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        {{ form.atd_min.label }}
+                        <b>
+                            {{ form.atd_min.label }}
+                        </b>
                         {{ form.atd_min(class='form-control', type='number', step="0.01", placeholder="Min", id="atd_min") }}
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="form-group">
-                        {{ form.atd_max.label }}
+                        <b>
+                            {{ form.atd_max.label }}
+                        </b>
                         {{ form.atd_max(class='form-control', type='number', step="0.01", placeholder="Max", id="atd_max") }}
                     </div>
                 </div>
@@ -95,14 +145,18 @@
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        {{ form.arv_exp_mean.label }}
+                        <b>
+                            {{ form.arv_exp_mean.label }}
+                        </b>
                         {{ form.arv_exp_mean(class='form-control', type="number", step="0.01", placeholder="Média de chegada", id="arv_exp_mean") }}
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="form-group">
-                        {{ form.atd_exp_mean.label }}
+                        <b>
+                            {{ form.atd_exp_mean.label }}
+                        </b>
                         {{ form.atd_exp_mean(class='form-control', type="number", step="0.01", placeholder="Média de atendimento", id="atd_exp_mean") }}
                     </div>
                 </div>
@@ -119,12 +173,22 @@
             </div>
         </div>
 
+        <div id="custom">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <hr>
         <br>
         {{ form.submit(class='btn btn-md btn-success')}}
 
     </form>
-
+    
 
 </div>
 

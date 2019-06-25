@@ -26,6 +26,8 @@
     <link rel="shortcut icon"
         href="{{ url_for('static', filename='icon/logo-icon.png') }}">
 
+        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
     {% block head %}
     {% endblock %}
 </head>
@@ -35,8 +37,7 @@
         {% block body %}
         {% endblock %}
     </main>
-
-    <script src="{{ url_for('static', filename='js/jquery/jquery-3.4.1.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery/jquery-3.4.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/popper/popper-1.15.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap/bootstrap-4.3.1.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/master.js')}}"></script>
