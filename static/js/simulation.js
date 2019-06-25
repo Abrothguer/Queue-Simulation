@@ -1,15 +1,13 @@
-console.log("Look at them apples");
-console.log(clientCount);
-
-var clientCounter = 0;
-
+// Variáveis Globais
 var currentClient = 0;
 var intervalId = null;
 
+// Objetos para plotar os gráficos
 var traceArrivals = {
     x: [],
     y: [],
     name: "Tempos de chegada",
+    type: 'scatter'
 };
 var traceAttendances = {
     x: [],
@@ -25,6 +23,7 @@ var traceSystem = {
     y: []
 };
 
+// Layout básico para plotar
 var basicLayout = {
     title: {
         font: {
@@ -60,54 +59,29 @@ var basicLayout = {
     }
 }
 
+// Função para clonar um objeto
 function clone(item) {
-    if (!item) { return item; } // null, undefined values check
-
-    var types = [ Number, String, Boolean ],
-        result;
-
-    // normalizing primitives if someone did new String('aaa'), or new Number('444');
-    types.forEach(function(type) {
-        if (item instanceof type) {
-            result = type( item );
-        }
-    });
-
-    if (typeof result == "undefined") {
-        if (Object.prototype.toString.call( item ) === "[object Array]") {
-            result = [];
-            item.forEach(function(child, index, array) {
-                result[index] = clone( child );
-            });
-        } else if (typeof item == "object") {
-            // testing that this is DOM
-            if (item.nodeType && typeof item.cloneNode == "function") {
-                result = item.cloneNode( true );
-            } else if (!item.prototype) { // check that this is a literal
-                if (item instanceof Date) {
-                    result = new Date(item);
-                } else {
-                    // it is an object literal
-                    result = {};
-                    for (var i in item) {
-                        result[i] = clone( item[i] );
-                    }
-                }
-            } else {
-                // depending what you would like here,
-                // just keep the reference, or create new object
-                if (false && item.constructor) {
-                    // would not advice to do that, reason? Read below
-                    result = new item.constructor();
-                } else {
-                    result = item;
-                }
-            }
-        } else {
-            result = item;
-        }
+    if (!item) {
+        return item;
     }
 
+    var types = [ Number, String, Boolean ], result;
+    result = item;
+
+    if (Object.prototype.toString.call( item ) === "[object Array]") {
+        result = [];
+        item.forEach(function(child, index, array) {
+            result[index] = clone( child );
+        });
+    }
+    else if (typeof item == "object") {
+        if (!item.prototype) {
+            result = {};
+            for (var i in item) {
+                result[i] = clone( item[i] );
+            }
+        }
+    }
     return result;
 }
 
@@ -135,9 +109,7 @@ function fetchAndFill(){
     .then(response => {
         response.text().then(rawData => {
 
-            console.log(rawData);
             var serverResponse = JSON.parse(rawData);
-            console.log(rawData);
 
             columns = document.getElementById("client_" + currentClient).children;
             columns[1].textContent = serverResponse["arrival-last"];
@@ -172,7 +144,7 @@ function fetchAndFill(){
 }
 
 function startSimulation(){
-    var simGap = parseFloat(document.getElementById("sim-gap").textContent);
+    var simGap = parseFloat(document.getElementById("sim-gap").value);
     simGap = isNaN(simGap) || simGap <= 0 ? 1000 : simGap*1000;
     intervalId = setInterval(fetchAndFill, simGap);
 }

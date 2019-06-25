@@ -6,26 +6,10 @@
 """
 
 # pylint: disable = R0903
-
-# Imports
-from random import random, randint
-# from flask_restless import DefaultSerializer
-
 # Classes
 
 
 class RandomSimulation():
-
-    def __init__(self, clients, arv_min, arv_max, atd_min, atd_max):
-
-        self.clients = clients
-        self.arv_min = arv_min
-        self.arv_max = arv_max
-        self.atd_min = atd_min
-        self.atd_max = atd_max
-
-
-class NewRandomSimulation():
     """
         Classe de simulações aleatórias
     """
@@ -40,32 +24,8 @@ class NewRandomSimulation():
         self.arrival_distr = DISTRS[distr](*arrival).__dict__
         self.attendance_distr = DISTRS[distr](*attendance).__dict__
 
-    def generate_objects(self):
-
-        self.arrival_distr_obj = DISTRS[self.distr](self.arrival_distr["minimum"], self.arrival_distr["maximum"])
-        self.attendance_distr_obj = DISTRS[self.distr](self.attendance_distr["minimum"], self.attendance_distr["maximum"])
-
-    def get_next(self):
-        """
-            Gera a próxima iteração da simulação
-        """
-
-        return{"client-number": 0,
-               "arrival-last": self.arrival_distr_obj.get_value(),
-               "arrival-total": 1,
-               "attendance": self.attendance_distr_obj.get_value(),
-               "attendance-begin": 1,
-               "queue": 1,
-               "attendance-end": 1,
-               "system-total": 1,
-               "server-free": 1
-              }
-
-    def get_summary(self):
-        """
-            Retorna o sumário da simulação
-        """
-        return {}
+        self.iterations = 0
+        self.iteration_values = []
 
 
 class UniformDistribution():
@@ -78,14 +38,6 @@ class UniformDistribution():
         self.minimum = minimum
         self.maximum = maximum
         self.int_bound = int_bound
-
-    def get_value(self):
-        """
-            Gera e retorna um valor aleatório da distribuição uniforme
-        """
-        if self.int_bound:
-            return randint(self.minimum, self.maximum)
-        return self.minimum + (random() * (self.maximum - self.minimum))
 
 
 class CustomDistribution():
@@ -103,21 +55,11 @@ class CustomDistribution():
             self.ranges.append((bound, val))
             bound += 0.01 * prob
 
-    def get_value(self):
-        """
-            Gera e retorna um valor da distribuição
-        """
-        generated = random()
-
-        for val, limit in self.ranges:
-            if generated > limit:
-                value = val
-            else:
-                break
-        return value
-
 
 class ExponentialDistribution():
+    """
+        Classe de distribuição exponencial
+    """
     pass
 
 
