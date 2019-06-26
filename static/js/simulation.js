@@ -1,14 +1,13 @@
-// Variáveis Globais
+// GLOBAL VARIABLES
 var currentClient = 0;
 var currentSimulation = 0;
 
 var intervalId = null;
 var simuInterval = null;
 
-var simulationCount = $("#simulation-count").val();
-simulationCount = 20;
+var simulationCount = 20;
 
-// Objetos para plotar os gráficos
+// GRAPH OBJECTS
 var traceArrivals = {
     x: [],
     y: [],
@@ -33,7 +32,13 @@ var traceSystem = {
     mode: 'lines+markers'
 };
 
-// Layout básico para plotar
+var basicTrace = {
+    x: [],
+    y: [],
+    mode: 'lines+markers'
+};
+
+// BASIC LAYOUT TO PLOT
 var basicLayout = {
     title: {
         font: {
@@ -46,7 +51,7 @@ var basicLayout = {
     },
     xaxis: {
         title: {
-            text: '# Cliente',
+            text: '# Simulação',
             font: {
                 family: 'Courier New, monospace',
                 size: 18,
@@ -69,7 +74,7 @@ var basicLayout = {
     }
 }
 
-// Função para clonar um objeto
+// CLONE FUNCTION
 function clone(item) {
     if (!item) {
         return item;
@@ -95,64 +100,48 @@ function clone(item) {
     return result;
 }
 
-arrivalAttenanceLayout = clone(basicLayout);
-arrivalAttenanceLayout.title.text = "Tempos de chegada e atendimento";
-queueLayout = clone(basicLayout);
-queueLayout.title.text = "Tempos de espera na fila";
-systemLayout = clone(basicLayout);
-systemLayout.title.text = "Tempos gastos no sistema";
+// CONSTRUCTION OF PAGE GRAPHS
+function renderGraphs(){
+    Plotly.purge('arrival-attendance-means-graph');
+    Plotly.purge('durations-graph');
+    Plotly.purge('queue-means-graph');
+    Plotly.purge('operator-total-graph');
+    Plotly.purge('system-means-graph');
 
-Plotly.newPlot('arrival-attendance-graph', [traceArrivals, traceAttendances], arrivalAttenanceLayout);
-Plotly.newPlot('queue-graph', [traceQueue], queueLayout);
-Plotly.newPlot('system-graph', [traceSystem], systemLayout);
+    durationsLayout = clone(basicLayout);
+    durationsLayout.title.text = "Tempos totais da simulação";
+    durationsLayout.xaxis.range = [1, simulationCount];
 
-function fetchAndFill(){
-    if(currentClient >= clientCount){
-        stopSimulation();
-        return;
-    }
+    queueMeansLayout = clone(basicLayout);
+    queueMeansLayout.title.text = "Tempos médios na fila";
+    queueMeansLayout.xaxis.range = [1, simulationCount];
 
-    ++currentClient;
-    console.log(currentClient);
+    operatorTotalLayout = clone(basicLayout);
+    operatorTotalLayout.title.text = "Tempos livres do operador";
+    operatorTotalLayout.xaxis.range = [1, simulationCount];
 
-    fetch(fetchURL)
-    .then(response => {
-        response.text().then(rawData => {
+    systemMeansLayout = clone(basicLayout);
+    systemMeansLayout.title.text = "Tempos médios gastos no sistema";
+    systemMeansLayout.xaxis.range = [1, simulationCount];
 
-            var serverResponse = JSON.parse(rawData);
+    arrivalAttendanceMeansLayout = clone(basicLayout);
+    arrivalAttendanceMeansLayout.title.text = "Tempos médios de chegada e atendimento";
+    arrivalAttendanceMeansLayout.xaxis.range = [1, simulationCount];
 
-            columns = document.getElementById("client_" + currentClient).children;
-            columns[1].textContent = serverResponse["arrival-last"];
-            columns[2].textContent = serverResponse["arrival-total"];
-            columns[3].textContent = serverResponse["attendance"];
-            columns[4].textContent = serverResponse["attendance-begin"];
-            columns[5].textContent = serverResponse["queue"];
-            columns[6].textContent = serverResponse["attendance-end"];
-            columns[7].textContent = serverResponse["system-total"];
-            columns[8].textContent = serverResponse["server-free"];
+    arrivalTrace = clone(basicTrace);
+    arrivalTrace.name = "Tempos de chegada";
+    attendanceTrace = clone(basicTrace);
+    attendanceTrace.name = "Tempos de atendimento";
 
-            Plotly.extendTraces("arrival-attendance-graph", {
-                x: [[currentClient], [currentClient]],
-                y: [[serverResponse["arrival-last"]], [serverResponse["attendance"]]]
-            }, [0, 1]);
+    Plotly.newPlot('arrival-attendance-means-graph', [arrivalTrace, attendanceTrace], arrivalAttendanceMeansLayout);
+    Plotly.newPlot('durations-graph', [clone(basicTrace)], durationsLayout);
+    Plotly.newPlot('queue-means-graph', [clone(basicTrace)], queueMeansLayout);
+    Plotly.newPlot('operator-total-graph', [clone(basicTrace)], operatorTotalLayout);
+    Plotly.newPlot('system-means-graph', [clone(basicTrace)], systemMeansLayout);
 
-            Plotly.extendTraces("queue-graph", {
-                x: [[currentClient]],
-                y: [[serverResponse["queue"]]]
-            }, [0]);
-
-            Plotly.extendTraces("system-graph", {
-                x: [[currentClient]],
-                y: [[serverResponse["system-total"]]]
-            }, [0]);
-
-            if(currentClient == clientCount){
-                console.log("Time to get summary");
-            }
-        })
-    })
 }
 
+// TEMPLATES AND ELEMENTS
 var tableTemplate = '\
     <table class="table table-bordered">\
         <thead class="thead-dark">\
@@ -170,13 +159,46 @@ var tableTemplate = '\
         </thead>\
         <tbody id="tbody-{{simuNumber}}">\
         </tbody>\
-    </table>'
+    </table>';
 
-var navTab = '<a class="nav-item nav-link active" data-toggle="tab" href="#tab-{{simuNumber}}" role="tab" aria-controls="public" aria-expanded="true">#{{simuNumber}} Sim.</a>'
-var divTab = '<div role="tabpanel" class="tab-pane fade active show mt-2" id="tab-{{simuNumber}}" aria-labelledby="public-tab" aria-expanded="true"></div>'
+var summaryTemplate = '\
+    <table class="table table-bordered">\
+        <thead class="thead-dark">\
+            <tr>\
+                <th>Estatística</th>\
+                <th>Valor</th>\
+            </tr>\
+        </thead>\
+        <tbody id="summary-{{simuNumber}}">\
+        </tbody>\
+    </table>';
+
+var summaryStats = [
+    "Tempo total na fila",
+    "Tempo médio na fila",
+    "Probabilidade de espera",
+    "Intervalo médio de chegada",
+    "Intervalo médio de atendimento",
+    "Tempo total de serviço",
+    "Tempo médio de serviço",
+    "Tempo total no sistema",
+    "Tempo médio no sistema",
+    "Tempo livre do operador",
+    "Probabilidade do operador ocioso"
+];
+
+var summaryRows = []
+
+for(var i = 0; i < summaryStats.length; ++i){
+    var summaryRow = document.createElement("TR");
+    var td = document.createElement("TD");
+    td.innerHTML = summaryStats[i];
+    summaryRow.appendChild(td);
+    summaryRows.push(summaryRow);
+}
 
 var tableRow = document.createElement("TR");
-for(var j = 0; j < 9; ++j){
+for(var i = 0; i < 9; ++i){
     tableRow.appendChild(document.createElement("TD"));
 }
 
@@ -190,6 +212,9 @@ tabDiv.setAttribute("role", "tabpanel");
 tabDiv.setAttribute("class", "tab-pane fade mt-2");
 tabDiv.setAttribute("aria-expanded", "false");
 
+
+// FILLING TABLES WITH CONTENT
+
 function fillRow(simuNumber, rowNumber, row){
     columns = document.getElementById("sim-" + simuNumber + "-clt-" + rowNumber).children;
     columns[1].textContent = row["arrival-last"];
@@ -201,6 +226,24 @@ function fillRow(simuNumber, rowNumber, row){
     columns[7].textContent = row["system-total"];
     columns[8].textContent = row["server-free"];
 }
+
+function fillSummary(simuNumber, summary){
+    var summaryContent = document.getElementById("summary-" + simuNumber).children;
+
+    summaryContent[0][1].textContent = summary[""];
+    summaryContent[1][1].textContent = summary[""];
+    summaryContent[2][1].textContent = summary[""];
+    summaryContent[3][1].textContent = summary[""];
+    summaryContent[4][1].textContent = summary[""];
+    summaryContent[5][1].textContent = summary[""];
+    summaryContent[6][1].textContent = summary[""];
+    summaryContent[7][1].textContent = summary[""];
+    summaryContent[8][1].textContent = summary[""];
+    summaryContent[9][1].textContent = summary[""];
+    summaryContent[10][1].textContent = summary[""];
+}
+
+// REDERING TAB CONTENT
 
 function renderTable(simuNumber, nRows, simulation){
 
@@ -223,27 +266,47 @@ function renderTable(simuNumber, nRows, simulation){
         rowClone.children[0].innerHTML = i;
 
         tbody.appendChild(rowClone);
-        fillRow(simuNumber, i, simulation[i-1]);
+        fillRow(simuNumber, i, simulation.iteration_values[i-1]);
     }
     reAdjust();
-
-    /*
-    for(var i = 0; i < nRows; ++i){
-        var row = document.createElement("TR");
-        row.setAttribute("id", "sim-" + simuNumber + "-clt-" + i);
-
-        var client = document.createElement("TD");
-        client.setAttribute("class", "font-weight-bold");
-        client.innerHTML = i;
-        row.appendChild(client);
-
-        for(var j = 0; j < 8; ++j){
-            row.appendChild(document.createElement("TD"));
-        }
-        tbody.appendChild(row);
-    }
-    */
 }
+
+function renderSummary(simuNumber, summary){
+
+    document.getElementById("sum-" + simuNumber).innerHTML = summaryTemplate.replace("{{simuNumber}}", simuNumber);
+    var summary = document.getElementById("summary-" + simuNumber);
+
+    for(var i = 0; i < summaryStats.length; ++i){
+        summary.appendChild(summaryRows[i].cloneNode(true));
+    }
+    fillSummary(simuNumber, summary);
+}
+
+// FILLING SIMULATION GRAPHS
+function fillGraph(simuNumber, summary){
+    Plotly.extendTraces("system-means-graph", {
+        x: [[simuNumber]],
+        y: [[1]]
+    }, [0]);
+    Plotly.extendTraces("operator-total-graph", {
+        x: [[simuNumber]],
+        y: [[1]]
+    }, [0]);
+    Plotly.extendTraces("durations-graph", {
+        x: [[simuNumber]],
+        y: [[1]]
+    }, [0]);
+    Plotly.extendTraces("queue-means-graph", {
+        x: [[simuNumber]],
+        y: [[1]]
+    }, [0]);
+    Plotly.extendTraces("arrival-attendance-means-graph", {
+        x: [[simuNumber], [currentClient]],
+        y: [[1], [1]]
+    }, [0, 1]);
+}
+
+// SIMULATION
 
 function fetchSimulation(){
     if(currentSimulation >= simulationCount){
@@ -257,8 +320,11 @@ function fetchSimulation(){
         response.text().then(rawData => {
 
             var serverResponse = JSON.parse(rawData);
-            console.log("RESPONSE", serverResponse);
-            renderTable(currentSimulation, simulationCount, serverResponse)
+            console.log("RESPONSE", simulationCount, serverResponse);
+
+            renderTable(currentSimulation, clientCount, serverResponse);
+            renderGraph(currentSimulation, serverResponse["summary"]);
+            fillGraph(currentSimulation, serverResponse["summary"]);
         })
     })
 }
@@ -266,109 +332,14 @@ function fetchSimulation(){
 function startSimulation(){
     var simGap = parseFloat(document.getElementById("sim-gap").value);
     simGap = isNaN(simGap) || simGap <= 0 ? 1000 : simGap*1000;
-    intervalId = setInterval(fetchAndFill, simGap);
+
+    let sc = $("#simulation-count").val();
+    simulationCount = sc == "" || isNaN(parseFloat(sc)) ? simulationCount : parseFloat(sc);
+
+    renderGraphs();
     simuInterval = setInterval(fetchSimulation, simGap);
 }
 
 function stopSimulation(){
-    window.clearInterval(intervalId);
     window.clearInterval(simuInterval);
 }
-
-
-
-
-
-
-
-
-
-
-
-var hidWidth;
-var scrollBarWidths = 40;
-
-var widthOfList = function(){
-    var itemsWidth = 0;
-    $('.list a').each(function(){
-        var itemWidth = $(this).outerWidth();
-        itemsWidth+=itemWidth;
-    });
-    return itemsWidth;
-};
-
-var widthOfHidden = function(){
-    var ww = 0 - $('.wrapper').outerWidth();
-    var hw = (($('.wrapper').outerWidth())-widthOfList()-getLeftPosi())-scrollBarWidths;
-    var rp = $(document).width() - ($('.nav-item.nav-link').last().offset().left + $('.nav-item.nav-link').last().outerWidth());
-
-    if (ww>hw) {
-        //return ww;
-        return (rp>ww?rp:ww);
-    }
-    else {
-        //return hw;
-        return (rp>hw?rp:hw);
-    }
-};
-
-var getLeftPosi = function(){
-    var ww = 0 - $('.wrapper').outerWidth();
-    var lp = $('.list').position().left;
-
-    if (ww>lp) {
-        return ww;
-    }
-    else {
-        return lp;
-    }
-};
-
-var reAdjust = function(){
-
-  // check right pos of last nav item
-  var rp = $(document).width() - ($('.nav-item.nav-link').last().offset().left + $('.nav-item.nav-link').last().outerWidth());
-  if (($('.wrapper').outerWidth()) < widthOfList() && (rp<0)) {
-    $('.scroller-right').show().css('display', 'flex');
-  }
-  else {
-    $('.scroller-right').hide();
-  }
-
-  if (getLeftPosi()<0) {
-    $('.scroller-left').show().css('display', 'flex');
-  }
-  else {
-    $('.item').animate({left:"-="+getLeftPosi()+"px"},'slow');
-  	$('.scroller-left').hide();
-  }
-}
-
-reAdjust();
-
-$(window).on('resize',function(e){
-  	reAdjust();
-});
-
-$('.scroller-right').click(function() {
-
-  $('.scroller-left').fadeIn('slow');
-  $('.scroller-right').fadeOut('slow');
-
-  var pace = widthOfHidden();
-  pace = pace > -500 ? pace-100 : -500;
-  $('.list').animate({left:"+="+pace+"px"},'slow',function(){
-    reAdjust();
-  });
-});
-
-$('.scroller-left').click(function() {
-
-	$('.scroller-right').fadeIn('slow');
-	$('.scroller-left').fadeOut('slow');
-
-    console.log(getLeftPosi());
-  	$('.list').animate({left:"-="+getLeftPosi()+"px"},'slow',function(){
-  	    reAdjust();
-  	});
-});

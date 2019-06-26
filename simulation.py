@@ -45,11 +45,44 @@ def get_simulated_data(simulation):
     return values
 
 
+def get_simulation_data(simulation):
+    """
+        Gera todos os valores para a simulação
+    """
+    simulation["iterations"] = 0
+    for _ in range(simulation["clients"]):
+        get_simulated_data(simulation)
+    get_summary(simulation)
+
 def get_summary(simulation):
     """
         Retorna o sumário da simulação
     """
-    return {}
+    simulation["summary"] = {}
+    iterations = simulation["iteration_values"];
+
+    # Tempo total na fila
+
+    # Tempo médio na fila
+
+    # Probabilidade de espera
+
+    # Intervalo médio de chegada
+
+    # Intervalo médio de atendimento
+
+    # Tempo total de serviço
+
+    # Tempo médio de serviço
+
+    # Tempo total no sistema
+
+    # Tempo médio no sistema
+
+    # Tempo livre do operador
+
+    # Probabilidade do operador ocioso
+
 
 
 def get_value_uniform(distr_info):
