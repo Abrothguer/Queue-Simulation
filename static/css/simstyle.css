@@ -31,11 +31,11 @@ body {
     border: 1px solid black;
 }
 
-.main-svg{
+.main-svg {
     width: 100%;
 }
 
-.svg-container{
+.svg-container {
     width: 100% !important;
 }
 
@@ -47,4 +47,44 @@ body {
 
 .w-100-px {
     width: 100px;
+}
+
+/*
+    Slides
+*/
+.wrapper {
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 5px;
+    height: 50px;
+}
+
+.list {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    min-width: 3500px;
+    margin-top: 0px;
+}
+
+.list li {
+    display: table-cell;
+    position: relative;
+    text-align: center;
+    cursor: grab;
+    cursor: -webkit-grab;
+    color: #efefef;
+    vertical-align: middle;
+}
+
+.scroller {
+    text-align: center;
+    cursor: pointer;
+    display: none;
+    padding: 7px;
+    padding-top: 13px;
+    white-space: no-wrap;
+    vertical-align: middle;
+    background-color: #fff;
 }
