@@ -15,6 +15,12 @@
 
 <div class="container">
 
+    {% if failure %}
+    <div class="alert alert-danger" role="alert">
+        Não foi possível fazer a simulação. Preencha os campos corretamente.
+    </div>
+    {% endif %}
+
     <form action=""
           method="POST">
         {{ form.csrf_token }}
@@ -188,7 +194,7 @@
         {{ form.submit(class='btn btn-md btn-success')}}
 
     </form>
-    
+
 
 </div>
 

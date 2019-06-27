@@ -9,6 +9,7 @@
 
 import numpy as np
 
+# Functions
 
 def get_simulated_data(simulation):
     """
@@ -54,35 +55,56 @@ def get_simulation_data(simulation):
         get_simulated_data(simulation)
     get_summary(simulation)
 
+
 def get_summary(simulation):
     """
         Retorna o sumário da simulação
     """
     simulation["summary"] = {}
-    iterations = simulation["iteration_values"];
+    iterations = simulation["iteration_values"]
 
     # Tempo total na fila
-
-    # Tempo médio na fila
-
-    # Probabilidade de espera
-
+    queue_total = 0
     # Intervalo médio de chegada
-
+    arrival_total = 0
     # Intervalo médio de atendimento
-
-    # Tempo total de serviço
-
-    # Tempo médio de serviço
-
+    attendance_total = 0
     # Tempo total no sistema
-
-    # Tempo médio no sistema
-
+    system_total = 0
     # Tempo livre do operador
-
+    server_total = 0
     # Probabilidade do operador ocioso
+    waited = 0
 
+    for iteration in iterations:
+        queue_total += iteration["queue"]
+        arrival_total += iteration["arrival-last"]
+        attendance_total += iteration["attendance"]
+        system_total += iteration["system-total"]
+        server_total += iteration["server-free"]
+        if iteration["queue"] > 0:
+            waited += 1
+
+    clients = simulation["clients"]
+
+    simulation["summary"] = {
+        "queue_total": queue_total,
+        "queue_mean": queue_total / waited,
+        "queue_prob": waited / clients,
+        "arrival_mean": arrival_total / clients,
+        "attendance_mean": attendance_total / clients,
+        "service_total": iterations[-1]["attendance-end"],
+        "system_total": system_total,
+        "system_mean": system_total / clients,
+        "server_free": server_total,
+        "server_prob": server_total / iterations[-1]["attendance-end"],
+    }
+
+def get_general_summary(simulations):
+    """
+        Gera o relatório geral das simulações
+    """
+    return {}
 
 
 def get_value_uniform(distr_info):
@@ -115,5 +137,6 @@ def get_value_exponential(distr_info):
 
 DISTRS_GETS = {
     "uniform": get_value_uniform,
-    "custom": get_value_custom
+    "custom": get_value_custom,
+    "exponential": get_value_exponential
 }

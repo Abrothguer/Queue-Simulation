@@ -20,7 +20,7 @@
     <h1 id="main-header">Modelagem e Simulação</h1>
     <h2>Sistema de Filas - Aleatório</h2>
 
-    {% if simulation.distr == "uniform" %}
+    {% if distr == "uniform" %}
     <h2> Distribuição uniforme </h2>
     {% else %}
     <h2> Distribuição </h2>
@@ -108,6 +108,7 @@
     <section id="simu-graphs" class="mt-5">
         <hr class="w-100">
         <h3>Gráficos das Simulações</h3>
+        <p> Os gráficos serão gerados a medida que as simulações vão sendo realizadas </p>
 
         <div class="row">
 
@@ -144,8 +145,6 @@
         <hr class="w-100">
         <h3>Relatório da Simulação</h3>
 
-        
-
 
     </section>
 
@@ -168,9 +167,9 @@
 
 <script src="{{ url_for('static', filename='js/plotly/plotly-latest.min.js') }}"></script>
 <script type="text/javascript">
-    var clientCount = {{ simulation.clients }};
-    var fetchURL = "{{ url_for('simulate_random') }}"
-    var simulationURL = "{{ url_for('get_simulation') }}"
+    var clientCount = {{ clients }};
+    var simulationURL = "{{ url_for('get_simulation') }}";
+    var summaryURL = "{{ url_for('get_summary') }}";
 </script>
 <script src="{{ url_for('static', filename='js/tabslider.js') }}"></script>
 <script src="{{ url_for('static', filename='js/simulation.js') }}"></script>
