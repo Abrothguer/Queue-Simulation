@@ -11,6 +11,7 @@ import numpy as np
 
 # Functions
 
+
 def get_simulated_data(simulation):
     """
         Gera os valores para uma iteração da simulação.
@@ -89,7 +90,7 @@ def get_summary(simulation):
 
     simulation["summary"] = {
         "queue_total": queue_total,
-        "queue_mean": queue_total / waited,
+        "queue_mean": queue_total / waited if waited != 0 else 0,
         "queue_prob": waited / clients,
         "arrival_mean": arrival_total / clients,
         "attendance_mean": attendance_total / clients,
@@ -100,11 +101,20 @@ def get_summary(simulation):
         "server_prob": server_total / iterations[-1]["attendance-end"],
     }
 
+
 def get_general_summary(simulations):
     """
         Gera o relatório geral das simulações
     """
-    return {}
+
+    return {
+        "g-mean-duration": simulations["service_total"] / simulations["iterations"],
+        "g-mean-system":
+            simulations["system_total"] / (simulations["iterations"] * simulations["clients"]),
+        "g-mean-queue":
+            simulations["queue_total"] / (simulations["iterations"] * simulations["clients"]),
+        "g-mean-server": simulations["server_free"] / simulations["iterations"]
+    }
 
 
 def get_value_uniform(distr_info):
@@ -129,11 +139,14 @@ def get_value_custom(distr_info):
             break
     return value
 
+
 def get_value_exponential(distr_info):
     """
         Gera e retorna um valor aleatório da distribuição exponencial
+        Transformação inversa Xi = F^(-1)(Ri) = -(1/lamda)*ln(1-R) onde R é uniforme
     """
-    return int(np.random.exponential(distr_info["mean"]) * 100) / 100
+    return -(distr_info["mean"]) * np.log(1 - np.random.random())
+
 
 DISTRS_GETS = {
     "uniform": get_value_uniform,

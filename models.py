@@ -21,8 +21,12 @@ class RandomSimulation():
             raise ValueError(f"Distribuição {distr} não suportada")
         self.distr = distr
 
-        self.arrival_distr = DISTRS[distr](*arrival).__dict__
-        self.attendance_distr = DISTRS[distr](*attendance).__dict__
+        if isinstance(arrival, tuple):
+            self.arrival_distr = DISTRS[distr](*arrival).__dict__
+            self.attendance_distr = DISTRS[distr](*attendance).__dict__
+        else:
+            self.arrival_distr = DISTRS[distr](arrival).__dict__
+            self.attendance_distr = DISTRS[distr](attendance).__dict__
 
         self.iterations = 0
         self.iteration_values = []

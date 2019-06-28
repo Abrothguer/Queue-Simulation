@@ -22,8 +22,8 @@
 
     {% if distr == "uniform" %}
     <h2> Distribuição uniforme </h2>
-    {% else %}
-    <h2> Distribuição </h2>
+    {% elif distr == "exponential" %}
+    <h2> Distribuição exponencial </h2>
     {% endif %}
 </header>
 
@@ -36,6 +36,7 @@
             <li> Clique em <b> Simular </b> para iniciar o processo </li>
             <li> Acompanhe em <b> tempo real </b> o preenchimento das <b> tabelas </b> e a criação dos <b> gráficos </b> </li>
             <li> Ao final será exibido um <b> relatório </b> da simulação </li>
+            <li> Obs.: Simulações muito grandes podem precisar de tempos maiores </li>
         </ul>
 
         <div class="w-100 overflow-hidden mt-5">
@@ -145,6 +146,52 @@
         <hr class="w-100">
         <h3>Relatório da Simulação</h3>
 
+        <div class="row">
+            <div class="col-sm-6">
+                <p>
+                    Número de clientes: <b id="num-clients"></b>
+                </p>
+            </div>
+            <div class="col-sm-6">
+                <p>
+                    Número de simulações: <b id="num-simu"></b>
+                </p>
+            </div>
+            <div class="col-sm-6">
+                <p>
+                    Distribuição escolhida: <b id="chosen-dist"></b>
+                </p>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Medida</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Tempo médio de duração</th>
+                        <th id="g-mean-duration"></th>
+                    </tr>
+                    <tr>
+                        <th>Tempo médio gasto no sistema</th>
+                        <th id="g-mean-system"></th>
+                    </tr>
+                    <tr>
+                        <th>Tempo médio de fila</th>
+                        <th id="g-mean-queue"></th>
+                    </tr>
+                    <tr>
+                        <th>Tempo médio do operador livre</th>
+                        <th id="g-mean-server"></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
     </section>
 
@@ -168,7 +215,8 @@
 <script src="{{ url_for('static', filename='js/plotly/plotly-latest.min.js') }}"></script>
 <script type="text/javascript">
     var clientCount = {{ clients }};
-    var simulationURL = "{{ url_for('get_simulation') }}";
+    var distr = "{{ distr }}";
+    var simulationURL = "{{ url_for('get_simulation', distr=distr) }}";
     var summaryURL = "{{ url_for('get_summary') }}";
 </script>
 <script src="{{ url_for('static', filename='js/tabslider.js') }}"></script>

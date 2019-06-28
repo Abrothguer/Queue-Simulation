@@ -42,7 +42,7 @@ $("#distributions").change(function(){
 
 $("#deterministic").hide();
 $("#distributions").show();
-$("#arrival_type-1").click();
+$("#arrival_type-0").click();
 $("#uniform").hide();
 $("#exponential").hide();
 $("#normal").hide();

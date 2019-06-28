@@ -222,16 +222,36 @@ var rowsNames = [
 function fillRow(simuNumber, rowNumber, row){
     columns = document.getElementById("sim-" + simuNumber + "-clt-" + rowNumber).children;
     for(var i = 0; i < rowsNames.length; ++i){
-        columns[i+1].textContent = row[ rowsNames[i] ];
+        columns[i+1].textContent = row[ rowsNames[i] ].toFixed(3);
     }
 }
 
-// Preenche a tabela de sumário
+// Preenche a tabela de sumário da simulação
 function fillSummary(simuNumber, summary){
     var summaryContent = document.getElementById("sumbody-" + simuNumber).children;
     for(var i = 0; i < summaryStats.length; ++i){
         summaryContent[i].children[1].textContent = summary[ summaryStats[i][1] ].toFixed(3);
     }
+}
+
+// Associa os ids da página com os nomes do json
+summaryNames = [
+    ["g-mean-duration", "g-mean-duration"],
+    ["g-mean-system", "g-mean-system"],
+    ["g-mean-queue", "g-mean-queue"],
+    ["g-mean-server", "g-mean-server"]
+]
+
+// Preenche o sumário geral
+function fillGeneralSummary(summary){
+    document.getElementById("num-clients").textContent = clientCount;
+    document.getElementById("num-simu").textContent = simulationCount;
+    document.getElementById("chosen-dist").textContent = distr;
+    for(var i = 0; i < summaryNames.length; ++i){
+        document.getElementById(summaryNames[i][0]).textContent =
+            summary[ summaryNames[i][1] ].toFixed(3);
+    }
+    $("#simu-summary").show();
 }
 
 // Preenche os gráficos da página
@@ -357,9 +377,10 @@ function fetchSimulationsSummary(){
     .then(response => {
         response.text().then(rawData => {
 
-            // Passa a resposta para JSON
+            // Passa a resposta para JSON e preenche o sumário
             var serverResponse = JSON.parse(rawData);
             console.log(serverResponse);
+            fillGeneralSummary(serverResponse);
         })
     })
 }

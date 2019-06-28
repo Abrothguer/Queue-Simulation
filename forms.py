@@ -15,10 +15,12 @@ class SimulationForm(FlaskForm):  # pylint: disable=R0903
     """
 
     # Commom
-    arrival_type = RadioField("Tempo de Chegada", choices=[(
-        'deterministic', 'Deterministico'), ('random', 'Aleatório')])
+    # TODO: Adicionar ('deterministic', 'Deterministico')
+    arrival_type = RadioField("Tempo de Chegada", choices=[
+        ('random', 'Aleatório')])
+    # TODO: Adicionar distribuição personalizada e normal: ('custom', 'Personalizada')
     distributions = RadioField("Distribuições", choices=[(
-        'uniform', 'Uniforme'), ('custom', 'Personalizada'), ('exponential', 'Exponencial')])
+        'uniform', 'Uniforme'), ('exponential', 'Exponencial')])
     clients = IntegerField("Número de clientes")
 
     # Deterministic
