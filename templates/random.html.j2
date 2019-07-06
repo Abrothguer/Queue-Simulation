@@ -216,8 +216,13 @@
 <script type="text/javascript">
     var clientCount = {{ clients }};
     var distr = "{{ distr }}";
-    var simulationURL = "{{ url_for('get_simulation', distr=distr) }}";
-    var summaryURL = "{{ url_for('get_summary') }}";
+    {% if model == "mm1" %}
+        var simulationURL = "{{ url_for('get_simulation', distr=distr) }}";
+        var summaryURL = "{{ url_for('get_summary') }}";
+    {% else %}
+        var simulationURL = "{{ url_for('get_mm2_simulation', distr=distr)}}";
+        var summaryURL = "{{ url_for('get_summary') }}";
+    {% endif %}
 </script>
 <script src="{{ url_for('static', filename='js/tabslider.js') }}"></script>
 <script src="{{ url_for('static', filename='js/simulation.js') }}"></script>

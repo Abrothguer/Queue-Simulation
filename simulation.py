@@ -12,6 +12,50 @@ import numpy as np
 # Functions
 
 
+def get_mm2_simulated_data(simulation):
+    """
+        Gera os valores para uma iteração da simulação. -- modelo mm2
+    """
+    iteration = simulation["iterations"]
+    simulation["iterations"] = iteration + 1
+
+    values = {}
+    values["arrival-last"] = DISTRS_GETS[simulation["distr"]](simulation["arrival_distr"])
+    values["attendance"] = DISTRS_GETS[simulation["distr"]](simulation["attendance_distr"])
+
+    values["arrival-total"] = values["arrival-last"]
+    values["system-total"] = values["attendance"]
+
+    if iteration == 0:
+        values["attendance-begin"] = values["arrival-last"]
+        values["queue"] = 0
+        values["attendance-end"] = values["attendance"] + values["arrival-last"]
+        values["server-free"] = values["arrival-last"]
+        # Atualiza o tempo em que o operador ficara livre
+        simulation["servers_prediction"][0] = values["attendance-end"]
+
+    else:
+        previous = simulation["iteration_values"][iteration - 1]
+        predicts = simulation["servers_prediction"]
+
+        values["arrival-total"] += previous["arrival-total"]
+
+        # Faz a previsao com base no operador que ficara livre mais rapidamente
+        queue = predicts[predicts.index(min(predicts))] - values["arrival-total"]
+        values["queue"] = 0 if queue <= 0 else queue
+        values["attendance-begin"] = values["arrival-total"] + values["queue"]
+        values["attendance-end"] = values["attendance-begin"] + values["attendance"]
+
+        values["server-free"] = 0 if queue >= 0 else abs(queue)
+        values["system-total"] += values["queue"]
+
+        # Atualiza o tempo em que o operador ficara livre - substitui o menor
+        predicts[predicts.index(min(predicts))] = values["attendance-end"]
+
+    simulation["iteration_values"].append(values)
+    return values
+
+
 def get_simulated_data(simulation):
     """
         Gera os valores para uma iteração da simulação.
@@ -45,6 +89,22 @@ def get_simulated_data(simulation):
 
     simulation["iteration_values"].append(values)
     return values
+
+
+def get_mm2_simulation_data(simulation):
+    """
+        Gera todos os valores para a simulação
+    """
+    simulation["iterations"] = 0
+    simulation["servers_prediction"] = [0, 0]
+    for _ in range(simulation["clients"]):
+        get_mm2_simulated_data(simulation)
+    predicts = simulation["servers_prediction"]
+    # Tempo livre do ultimo operador
+    simulation["iteration_values"][-1]["server-free"] += simulation[
+        "servers_prediction"][predicts.index(max(predicts))] - simulation[
+            "servers_prediction"][predicts.index(min(predicts))]
+    get_summary(simulation)
 
 
 def get_simulation_data(simulation):

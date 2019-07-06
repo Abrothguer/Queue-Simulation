@@ -32,6 +32,30 @@ class RandomSimulation():
         self.iteration_values = []
 
 
+class RandomMM2Simulation():
+    """
+        Classe de simulações aleatórias - Modelo MM2
+    """
+
+    def __init__(self, clients, arrival, attendance, distr):
+
+        self.clients = clients
+        if distr not in DISTRS.keys():
+            raise ValueError(f"Distribuição {distr} não suportada")
+        self.distr = distr
+        self.model = "mm2"
+
+        if isinstance(arrival, tuple):
+            self.arrival_distr = DISTRS[distr](*arrival).__dict__
+            self.attendance_distr = DISTRS[distr](*attendance).__dict__
+        else:
+            self.arrival_distr = DISTRS[distr](arrival).__dict__
+            self.attendance_distr = DISTRS[distr](attendance).__dict__
+
+        self.iterations = 0
+        self.iteration_values = []
+
+
 class UniformDistribution():
     """
         Classe de distribuição uniforme

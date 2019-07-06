@@ -60,6 +60,20 @@
             <br>
         </div>
 
+        <div id="models">
+            <b>
+                {{ form.queue_model.label }}
+            </b>
+
+            {% for subfield in form.queue_model %}
+                <div class="form-group">
+                    {{ subfield }}
+                    {{ subfield.label }}
+                </div>
+            {% endfor %}
+
+        </div>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">

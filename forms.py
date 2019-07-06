@@ -21,6 +21,8 @@ class SimulationForm(FlaskForm):  # pylint: disable=R0903
     # TODO: Adicionar distribuição personalizada e normal: ('custom', 'Personalizada')
     distributions = RadioField("Distribuições", choices=[(
         'uniform', 'Uniforme'), ('exponential', 'Exponencial')])
+    queue_model = RadioField("Modelo de filas", choices=[(
+        'mm1', 'M/M/1'), ('mm2', 'M/M/2')])
     clients = IntegerField("Número de clientes")
 
     # Deterministic
